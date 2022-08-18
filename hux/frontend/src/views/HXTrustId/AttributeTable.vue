@@ -5,7 +5,7 @@
       <v-card-title v-if="data.length > 0" class="py-5 px-6">
         <span class="text-h3 black--text">HX TrustID attributes</span>
       </v-card-title>
-      <v-card-text v-if="data.length > 0" class="px-6 attri-overflow">
+      <v-card-text v-if="data.length > 0" class="px-6">
         <hux-data-table
           v-if="!isLoading"
           class="attribute-table"
@@ -254,11 +254,13 @@ export default {
   }
   .hux-data-table {
     ::v-deep table {
+      position: relative;
       .v-data-table-header {
         tr {
           th {
             background: var(--v-primary-lighten2);
             height: 40px !important;
+            top: -30px;
           }
         }
       }
@@ -279,9 +281,6 @@ export default {
   .agree-color {
     color: var(--v-success-lighten3);
   }
-}
-.attri-overflow {
-  overflow-x: auto;
 }
 .progress-section {
   display: none;

@@ -29,7 +29,6 @@
         </div>
       </template>
     </page-header>
-
     <v-progress-linear :active="loading" :indeterminate="loading" />
 
     <div class="d-flex">
@@ -37,6 +36,7 @@
         class="flex-grow-1 flex-shrink-1 overflow-auto mw-100 content-section"
       >
         <overview v-if="!loading" :data="trustIdOverview" />
+
         <v-tabs v-if="!loading" v-model="tabOption" class="mt-4">
           <v-tabs-slider color="primary" class="tab-slider"></v-tabs-slider>
           <div class="d-flex">
@@ -45,10 +45,19 @@
               class="pa-2 mr-3 text-h3"
               color
               data-e2e="comparison-tab"
+              @click="enableAttributeTab = false"
             >
               Comparison
             </v-tab>
-            <v-tab key="attributes" class="text-h3" data-e2e="attributes-tab">
+            <v-tab
+              key="attributes"
+              class="text-h3"
+              data-e2e="attributes-tab"
+              @click="
+                isFilterToggled = false
+                enableAttributeTab = true
+              "
+            >
               Attributes
             </v-tab>
           </div>
@@ -343,33 +352,33 @@
               </v-card>
             </div>
           </v-tab-item>
-          <v-tab-item key="attributes" class="tab-item">
-            <trust-id-attributes
-              v-if="showAttributes"
-              :data="attributeData.data"
-            />
-            <div v-else class="mt-3">
-              <v-card class="pb-12 box-shadow-5 rounded-lg" height="250">
-                <empty-page
-                  class="pt-16"
-                  :type="emptyPageIcon(attributeErrorState)"
-                  :size="50"
-                >
-                  <template #title>
-                    <div class="title-no-notification">
-                      {{ attributeTableTitle }}
-                    </div>
-                  </template>
-                  <template #subtitle>
-                    <div class="des-no-notification">
-                      {{ attributeTableDescription }}
-                    </div>
-                  </template>
-                </empty-page>
-              </v-card>
-            </div>
-          </v-tab-item>
         </v-tabs-items>
+        <div v-if="enableAttributeTab" class="tab-item">
+          <trust-id-attributes
+            v-if="showAttributes"
+            :data="attributeData.data"
+          />
+          <div v-else class="mt-3">
+            <v-card class="pb-12 box-shadow-5 rounded-lg" height="250">
+              <empty-page
+                class="pt-16"
+                :type="emptyPageIcon(attributeErrorState)"
+                :size="50"
+              >
+                <template #title>
+                  <div class="title-no-notification">
+                    {{ attributeTableTitle }}
+                  </div>
+                </template>
+                <template #subtitle>
+                  <div class="des-no-notification">
+                    {{ attributeTableDescription }}
+                  </div>
+                </template>
+              </empty-page>
+            </v-card>
+          </div>
+        </div>
       </div>
       <div class="ml-auto segment-drawer">
         <add-segment-drawer
@@ -425,6 +434,7 @@ export default {
       tabOption: 0,
       selectedSegment: "composite & factor scores",
       isFilterToggled: false,
+      enableAttributeTab: false,
       segmentLength: 1,
       addSegments: [],
       switchSegment: true,
