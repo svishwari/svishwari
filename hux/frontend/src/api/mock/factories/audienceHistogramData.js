@@ -27,6 +27,7 @@ export default {
     min: 0.0,
     max: 1.0,
     steps: 0.05,
+    selection_type: "value",
     values: [
       [0.02537854973094943, 11522],
       [0.07478697708351197, 11651],
@@ -56,6 +57,7 @@ export default {
     min: 0,
     max: 998.8,
     steps: 20,
+    selection_type: "percentage",
     values: [
       [25.01266121420892, 20466],
       [74.90030921605447, 19708],
@@ -85,6 +87,7 @@ export default {
     min: 0.0,
     max: 1.0,
     steps: 0.05,
+    selection_type: "value",
     values: [
       [0.024946739301654024, 11427],
       [0.07496427927927932, 11322],
