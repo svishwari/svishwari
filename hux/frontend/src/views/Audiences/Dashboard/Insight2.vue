@@ -736,7 +736,10 @@ export default {
     },
 
     showAttributes() {
-      return Object.keys(this.appliedFilters).length > 0 && Object.keys(this.appliedFilters.general).length > 0
+      return (
+        Object.keys(this.appliedFilters).length > 0 &&
+        Object.keys(this.appliedFilters.general).length > 0
+      )
     },
 
     lookalikeableAudience() {
