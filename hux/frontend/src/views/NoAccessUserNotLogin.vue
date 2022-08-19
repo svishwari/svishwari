@@ -56,7 +56,7 @@ import huxButton from "@/components/common/huxButton"
 import TextField from "@/components/common/TextField.vue"
 
 export default {
-  name: "NoAccess",
+  name: "NoAccessUserNotLogin",
 
   components: {
     huxButton,

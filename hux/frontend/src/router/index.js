@@ -4,6 +4,7 @@ import VueRouter from "vue-router"
 import Auth from "@okta/okta-vue"
 import { pageTitle } from "@/utils"
 import config from "@/config"
+import { getAccess } from "../utils"
 
 Vue.use(Auth, config.oidc)
 
@@ -201,6 +202,10 @@ const routes = [
       layout: "app",
       title: "Add an Audience",
       requiresAuth: true,
+      access: {
+        screen: "audience",
+        action: "create",
+      },
     },
   },
   {
@@ -211,6 +216,10 @@ const routes = [
       layout: "app",
       title: "Update an Audience",
       requiresAuth: true,
+      access: {
+        screen: "audience",
+        action: "update_one",
+      },
     },
   },
   {
@@ -221,6 +230,10 @@ const routes = [
       layout: "app",
       title: "Clone an Audience",
       requiresAuth: true,
+      access: {
+        screen: "audience",
+        action: "create",
+      },
     },
   },
   {
@@ -251,6 +264,10 @@ const routes = [
       layout: "app",
       title: "Add an lookalike Audience",
       requiresAuth: true,
+      access: {
+        screen: "audience",
+        action: "create_lookalike",
+      },
     },
   },
   {
@@ -271,6 +288,10 @@ const routes = [
       layout: "app",
       title: "Add an Engagement",
       requiresAuth: true,
+      access: {
+        screen: "engagements",
+        action: "create_one",
+      },
     },
   },
   //TODO: HUS-1817 remove once step 3 is also done.
@@ -282,6 +303,10 @@ const routes = [
       layout: "app",
       title: "Add an Engagement",
       requiresAuth: true,
+      access: {
+        screen: "engagements",
+        action: "create_one",
+      },
     },
   },
   {
@@ -292,6 +317,10 @@ const routes = [
       layout: "app",
       title: "Edit an Engagement",
       requiresAuth: true,
+      access: {
+        screen: "engagements",
+        action: "update_one",
+      },
     },
   },
   {
@@ -335,6 +364,10 @@ const routes = [
       layout: "app",
       title: "Add a Destination",
       requiresAuth: true,
+      access: {
+        screen: "destinations",
+        action: "create_one",
+      },
     },
   },
   {
@@ -365,6 +398,10 @@ const routes = [
       layout: "app",
       title: "Add an Application",
       requiresAuth: true,
+      access: {
+        screen: "applications",
+        action: "create_application",
+      },
     },
   },
   {
@@ -388,9 +425,19 @@ const routes = [
     },
   },
   {
-    path: "/no-access",
-    name: "NoAccess",
-    component: () => import("@/views/NoAccess"),
+    path: "/no-access-no-login",
+    name: "NoAccessUserNotLogin",
+    component: () => import("@/views/NoAccessUserNotLogin"),
+    meta: {
+      layout: "default",
+      title: "No Access",
+      requiresAuth: false,
+    },
+  },
+  {
+    path: "/no-access-login",
+    name: "NoAccessUserLogin",
+    component: () => import("@/views/NoAccessUserLogin"),
     meta: {
       layout: "default",
       title: "No Access",
@@ -442,14 +489,23 @@ router.beforeEach(async (to, from, next) => {
   // TODO: HUS-1253
   const isAuthenticated = await Vue.prototype.$auth.isAuthenticated()
 
-  if (requiresAuth && !isAuthenticated) {
-    sessionStorage.setItem("appRedirect", to.fullPath)
-    next({
-      path: "/login",
-      query: { redirect: to.fullPath },
-    })
+  if (
+    !to.meta.access ||
+    getAccess(to.meta.access.screen, to.meta.access.action)
+  ) {
+    if (requiresAuth && !isAuthenticated) {
+      sessionStorage.setItem("appRedirect", to.fullPath)
+      next({
+        path: "/login",
+        query: { redirect: to.fullPath },
+      })
+    } else {
+      next()
+    }
   } else {
-    next()
+    next({
+      path: "/no-access-login",
+    })
   }
 })
 

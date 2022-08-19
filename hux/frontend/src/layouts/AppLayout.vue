@@ -43,7 +43,7 @@ import SideMenu from "@/components/SideMenu"
 import HuxAlert from "@/components/common/HuxAlert.vue"
 import ConfirmModal from "@/components/common/ConfirmModal.vue"
 import Icon from "@/components/common/Icon"
-import { mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "AppLayout",
@@ -76,11 +76,15 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      removeAlert: "alerts/removeAlert",
+    }),
     toggleSidebar() {
       this.toggleMini = !this.toggleMini
     },
     closeModal() {
       this.infoModal = false
+      this.removeAlert(this.alerts[0].id)
       this.$router.push({
         name: "Home",
       })
