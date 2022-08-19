@@ -577,6 +577,8 @@ export default {
         return value
       } else if (attribute.selection_type == "percentage") {
         return `${Math.floor((value / (attribute.max - attribute.min)) * 100)}%`
+      } else {
+        return value
       }
     },
     sizeHandler() {
@@ -735,15 +737,18 @@ export default {
         filters: [
           {
             section_aggregator: "ALL",
-            section_filters: [
-              {
-                field: condition.attribute.key,
-                type: type,
-                value: value,
-                selection_type: condition.selection_type,
-                delta_type: condition.delta_type.key,
-              },
-            ],
+            section_filters:
+              value != ""
+                ? [
+                    {
+                      field: condition.attribute.key,
+                      type: type,
+                      value: value,
+                      selection_type: condition.selection_type,
+                      delta_type: condition.delta_type.key,
+                    },
+                  ]
+                : [],
           },
         ],
       }
