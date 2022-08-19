@@ -11,7 +11,10 @@
           :logo-box-padding="'10px'"
           :sub-title="formatText(dataSource.category)"
           :disabled="dataSource.status !== 'Active'"
-          :action-menu="dataSource.status !== 'Active'"
+          :action-menu="
+            dataSource.status !== 'Active' &&
+            getAccess('data_source', 'delete_one')
+          "
           :interactable="dataSource.status == 'Active' ? true : false"
           :coming-soon="false"
           :icon-color="true"
