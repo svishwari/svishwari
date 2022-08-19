@@ -799,7 +799,7 @@ def get_customers_insights_count_by_day(
     #  data for all environments
     return (
         response_body
-        if get_config().ENV_NAME == api_c.STAGING_ENV
+        if get_config().ENV_NAME in [api_c.STAGING_ENV, api_c.LPZDEV_ENV]
         else add_missing_customer_count_by_day(response_body, date_filters)
     )
 
