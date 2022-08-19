@@ -52,6 +52,8 @@
               :is-offset-y="false"
               :is-sub-menu="false"
               :min-date="minDate"
+              :max-date="maxDate"
+              :show-min="showMin"
               @on-date-select="(val) => $emit('on-date-select', val)"
             />
             <v-list-item v-if="!isSubMenu">
@@ -61,7 +63,7 @@
                   class="end-date-picker mb-4"
                   no-title
                   scrollable
-                  :min="minDate"
+                  :min="showMin ? minDate : ''"
                   :max="maxDate"
                 >
                   <div class="date-picker-header" style="">
@@ -133,6 +135,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    showMin: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   data: function () {
     return {
@@ -175,7 +182,7 @@ export default {
     font-size: 14px;
     line-height: 22px;
     width: auto !important;
-    min-width: 200px;
+    min-width: 215px;
     color: var(--v-black-darken4);
     width: 215px !important;
     height: 42px;

@@ -114,7 +114,7 @@ class AzureClient(CloudClient):
         try:
             return ContainerClient(
                 account_url=f"https://"
-                f"{get_config().AZURE_BATCH_ACCOUNT_NAME}.blob.core.windows.net",
+                f"{get_config().AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net",
                 container_name=get_config().AZURE_STORAGE_CONTAINER_NAME,
                 credential=ManagedIdentityCredential(
                     client_id=self.config.AZURE_MANAGED_IDENTITY_CLIENT_ID,
@@ -233,10 +233,7 @@ class AzureClient(CloudClient):
             Tuple[bool, str]: Returns bool for health status and message.
         """
 
-        container_client = ContainerClient.from_connection_string(
-            self.storage_connection_string, self.storage_container_name
-        )
-        client_status = container_client.exists()
+        client_status = self.get_container_client().exists()
 
         status = (
             client_status,

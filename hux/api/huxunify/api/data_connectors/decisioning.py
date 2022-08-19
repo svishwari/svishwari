@@ -48,7 +48,7 @@ def map_model_date_field(
        datetime: datetime value.
     """
     try:
-        return datetime.strptime(date_string, "%Y-%M-%d")
+        return datetime.strptime(date_string, "%Y-%m-%d")
     except (ValueError, AttributeError):
         logging.warning(
             "Failed to map %s date %s for %s.",
@@ -360,8 +360,10 @@ class Decisioning:
                     api_c.FEATURE_TYPE: feature.get(
                         api_c.MODEL_TYPE, api_c.BINARY
                     ),
-                    api_c.RECORDS_NOT_NULL: 0,
-                    api_c.FEATURE_IMPORTANCE: 1,
+                    api_c.RECORDS_NOT_NULL: feature.get(
+                        api_c.FEATURE_PRESENCE, 0
+                    ),
+                    api_c.FEATURE_IMPORTANCE: feature.get(api_c.RANK, 0),
                     api_c.MEAN: 0,
                     api_c.MIN: 0,
                     api_c.MAX: 0,

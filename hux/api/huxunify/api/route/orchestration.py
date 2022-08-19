@@ -1718,7 +1718,7 @@ class AudienceRules(SwaggerView):
                 "not_equals": "Does not equal",
                 "within_the_last": "Within the last",
                 "not_within_the_last": "Not within the last",
-                "from": "From",
+                "from": "From (Time range)",
                 "value": "Value",
                 "decile_percentage": "Decile percentage",
             },
@@ -1930,9 +1930,9 @@ class AudienceRules(SwaggerView):
                         },
                     },
                     "events": event_types_rules,
-                    "product_categories": product_category_list,
                 },
-            }
+            },
+            "product_categories": product_category_list,
         }
 
         rules_constants.update(rules_from_cdm)

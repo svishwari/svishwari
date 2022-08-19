@@ -55,157 +55,291 @@
           />
           <span class="mb-2"> of the following: </span>
         </div>
-        <v-col
+        <div
           v-for="(condition, ixcondition) in rule.conditions"
           :key="condition.id"
-          class="rule-section pa-0 mb-2 d-flex"
         >
-          <div class="pa-0 pr-2 flex-fill">
-            <div
-              :class="readMode ? 'readmode-condition-card' : 'condition-card'"
-            >
-              <div class="condition-container px-4 d-fles">
-                <div class="condition-items pr-5">
-                  <hux-dropdown
-                    :selected="condition.attribute"
-                    :items="attributeOptions()"
-                    label="Select attribute"
-                    data-e2e="select-attr-btn"
-                    @on-select="onSelect('attribute', condition, $event)"
-                  />
-                  <hux-dropdown
-                    v-if="isTextORSelect(condition)"
-                    label="Select operator"
-                    :items="operatorOptions(condition)"
-                    :selected="condition.operator"
-                    data-e2e="select-operator-btn"
-                    @on-select="onSelect('operator', condition, $event)"
-                  />
-                  <text-field
-                    v-if="
-                      condition.operator &&
-                      condition.operator.key != 'between' &&
-                      condition.attribute.type === 'text'
-                    "
-                    v-model="condition.text"
-                    class="item-text-field"
-                    placeholder="Enter value"
-                    required
-                    @blur="triggerSizing(condition)"
-                  />
-                  <span
-                    v-if="
-                      condition.operator &&
-                      condition.operator.key != 'between' &&
-                      condition.attribute.type === 'text'
-                    "
-                    class="ml-2 text-body-1"
-                    >Days</span
-                  >
-                  <div
-                    v-if="
-                      condition.operator.key == 'between' &&
-                      condition.attribute.type === 'text'
-                    "
-                    class="d-flex align-center"
-                  >
-                    <div>
-                      <hux-start-date
-                        :label="selectedStartDate"
-                        :selected="selectedStartDate"
-                        @on-date-select="onStartDateSelect"
-                      />
-                    </div>
-                    <div>
-                      <icon
-                        class="ml-2 mr-1 mt-3"
-                        type="arrow"
-                        :size="19"
-                        color="primary"
-                        variant="lighten6"
-                      />
-                    </div>
-                    <div>
-                      <hux-end-date
-                        :label="selectedEndDate"
-                        :selected="selectedEndDate"
-                        :is-sub-menu="true"
-                        :min-date="endMinDate"
-                        @on-date-select="onEndDateSelect"
-                      />
-                    </div>
-                  </div>
+          <v-col class="rule-section pa-0 mb-2 d-flex">
+            <div class="pa-0 pr-2 flex-fill">
+              <div
+                :class="readMode ? 'readmode-condition-card' : 'condition-card'"
+              >
+                <div class="condition-container px-4 d-flex">
+                  <div class="condition-items pr-5">
+                    <hux-dropdown
+                      :selected="condition.attribute"
+                      :items="attributeOptions()"
+                      label="Select attribute"
+                      data-e2e="select-attr-btn"
+                      @on-select="onSelect('attribute', condition, $event)"
+                    />
+                    <hux-dropdown
+                      v-if="isTextORSelect(condition)"
+                      label="Select operator"
+                      :items="operatorOptions(condition)"
+                      :selected="condition.operator"
+                      data-e2e="select-operator-btn"
+                      @on-select="onSelect('operator', condition, $event)"
+                    />
+                    <text-field
+                      v-if="
+                        condition.operator &&
+                        condition.operator.key != 'from' &&
+                        condition.attribute.type === 'text'
+                      "
+                      v-model="condition.text"
+                      class="item-text-field"
+                      placeholder="Enter value"
+                      required
+                      @blur="triggerSizing(condition)"
+                    />
 
-                  <hux-autocomplete
-                    v-if="
-                      condition.operator && condition.attribute.type === 'list'
-                    "
-                    v-model="condition.text"
-                    :options="listOptions(condition)"
-                    data-e2e="auto-complete-btn"
-                    :loader="loaderValue"
-                    :placeholder="getPlaceHolderText(condition)"
-                    @change="triggerSizing(condition)"
-                    @search-update="autoSearchFunc(condition, $event)"
-                  />
-                  <div
-                    v-if="condition.attribute && !isTextORSelect(condition)"
-                    ref="hux-density-slider"
-                    class="range-attribute-container"
-                    :class="condition.attribute.values ? 'pt-6' : ''"
-                  >
-                    <hux-density-chart
-                      v-if="condition.attribute.values"
-                      :id="condition.id"
-                      :data="condition.attribute.values"
-                      :chart-dimensions="chartDimensions"
-                      :min="condition.attribute.min"
-                      :max="condition.attribute.max"
-                      :range="condition.range"
-                      :read-mode="readMode"
-                      class="ml-2 mr-0"
-                    />
-                    <hux-slider
-                      v-model="condition.range"
-                      :read-only="readMode ? true : false"
-                      :min="condition.attribute.min"
-                      :max="condition.attribute.max"
-                      :step="condition.attribute.steps"
-                      :custom-label="
-                        (val) => sliderLabel(condition.attribute, val)
+                    <hux-dropdown
+                      v-if="
+                        condition.operator &&
+                        condition.operator.key != 'from' &&
+                        condition.attribute.type === 'text'
                       "
-                      :class="
-                        condition.attribute.values ? 'density-slider' : ''
-                      "
-                      is-range-slider
-                      :read-mode="readMode"
-                      @onFinalValue="triggerSizing(condition)"
+                      label="Select time"
+                      :items="ruleAttributes.allowed_timedelta_types"
+                      :selected="condition.delta_type"
+                      data-e2e="select-time-btn"
+                      @on-select="onSelect('time', condition, $event)"
                     />
+                    <div
+                      v-if="
+                        condition.operator.key == 'from' &&
+                        condition.attribute.type === 'text'
+                      "
+                      class="d-flex align-center mr-2"
+                    >
+                      <div>
+                        <hux-start-date
+                          :label="selectedStartDate"
+                          :selected="selectedStartDate"
+                          :show-min="false"
+                          :max-date="endMaxDate"
+                          @on-date-select="onStartDateSelect($event, condition)"
+                        />
+                      </div>
+                      <div>
+                        <icon
+                          class="mx-1 mt-3"
+                          type="arrow"
+                          :size="19"
+                          color="primary"
+                          variant="lighten6"
+                        />
+                      </div>
+                      <div>
+                        <hux-end-date
+                          :label="selectedEndDate"
+                          :selected="selectedEndDate"
+                          :is-sub-menu="true"
+                          :min-date="endMinDate"
+                          :max-date="endMaxDate"
+                          :show-min="true"
+                          @on-date-select="onEndDateSelect($event, condition)"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- <span
+                      v-if="
+                        condition.operator &&
+                        condition.attribute.type === 'text'
+                      "
+                      class="ml-4 text-body-1 primary--text cursor-pointer"
+                      @click="
+                        condition.rules && condition.rules.length > 0
+                          ? addNewSubCondition(condition.rules[0].id, condition)
+                          : addNewSubSection(condition)
+                      "
+                      >+ Product</span
+                    > -->
+
+                    <hux-autocomplete
+                      v-if="
+                        condition.operator &&
+                        condition.attribute.type === 'list'
+                      "
+                      v-model="condition.text"
+                      :options="listOptions(condition)"
+                      data-e2e="auto-complete-btn"
+                      :loader="loaderValue"
+                      :placeholder="getPlaceHolderText(condition)"
+                      @change="triggerSizing(condition)"
+                      @search-update="autoSearchFunc(condition, $event)"
+                    />
+                    <div
+                      v-if="condition.attribute && !isTextORSelect(condition)"
+                      ref="hux-density-slider"
+                      class="range-attribute-container"
+                      :class="condition.attribute.values ? 'pt-6' : ''"
+                    >
+                      <hux-density-chart
+                        v-if="condition.attribute.values"
+                        :id="condition.id"
+                        :data="condition.attribute.values"
+                        :chart-dimensions="chartDimensions"
+                        :min="condition.attribute.min"
+                        :max="condition.attribute.max"
+                        :range="condition.range"
+                        :read-mode="readMode"
+                        class="ml-2 mr-0"
+                      />
+                      <hux-slider
+                        v-model="condition.range"
+                        :read-only="readMode ? true : false"
+                        :min="condition.attribute.min"
+                        :max="condition.attribute.max"
+                        :step="condition.attribute.steps"
+                        :custom-label="
+                          (val) => sliderLabel(condition.attribute, val)
+                        "
+                        :class="
+                          condition.attribute.values ? 'density-slider' : ''
+                        "
+                        is-range-slider
+                        :read-mode="readMode"
+                        @onFinalValue="triggerSizing(condition)"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div
-                  v-if="!readMode"
-                  class="condition-actions pa-0 cursor-pointer"
-                  data-e2e="remove-attr"
-                  @click="removeCondition(rule, ixcondition)"
-                >
-                  <icon type="trash" :size="18" color="black" />
+                  <div
+                    v-if="!readMode"
+                    class="condition-actions pa-0 cursor-pointer"
+                    data-e2e="remove-attr"
+                    @click="removeCondition(rule, ixcondition)"
+                  >
+                    <icon type="trash" :size="18" color="black" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="pr-0 py-0 flex-right">
-            <div class="condition-summary">
-              <span class="title text-h5">Rule Size</span>
-              <span v-if="condition.awaitingSize" class="pt-2">
-                <v-progress-linear indeterminate buffer-value="0" stream />
-              </span>
-              <span v-else class="value text-h6 pt-1 text-subtitle-1">
-                {{ condition.size | Numeric(false, false, true) }}
-              </span>
+            <div class="pr-0 py-0 flex-right">
+              <div class="condition-summary">
+                <span class="title text-h5">Rule Size</span>
+                <span v-if="condition.awaitingSize" class="pt-2">
+                  <v-progress-linear indeterminate buffer-value="0" stream />
+                </span>
+                <span v-else class="value text-h6 pt-1 text-subtitle-1">
+                  {{ condition.size | Numeric(false, false, true) }}
+                </span>
+              </div>
             </div>
-          </div>
-        </v-col>
+          </v-col>
+          <v-col
+            v-if="condition.rules && condition.rules.length > 0"
+            col="12"
+            class="pt-0 pr-0 pa-0"
+          >
+            <div v-for="sub_rule in condition.rules" :key="sub_rule.id">
+              <div
+                class="
+                  d-flex
+                  align-center
+                  pa-0
+                  black--text
+                  text--darken-4 text-body-2
+                  ml-15
+                "
+              >
+                <span class="mr-2 mb-2">And include &nbsp;</span>
+                <hux-switch
+                  v-model="sub_rule.operand"
+                  :is-disabled="readMode ? true : false"
+                  class="mt-2 pt-0"
+                  @input="triggerSizingForRule(sub_rule)"
+                />
+                <span class="mb-2"> of the following products: </span>
+              </div>
+              <div
+                v-for="(sub_condition, indcondition) in sub_rule.conditions"
+                :key="sub_condition.id"
+              >
+                <v-col class="rule-section pa-0 mb-2 d-flex">
+                  <div class="pa-0 pr-2 flex-fill">
+                    <div
+                      :class="[
+                        readMode
+                          ? 'readmode-condition-card ml-15'
+                          : 'condition-card ml-15',
+                      ]"
+                    >
+                      <div class="condition-container px-4 d-flex">
+                        <div class="condition-items pr-5">
+                          <text-field
+                            v-model="sub_condition.attribute.name"
+                            class="item-text-field"
+                            placeholder="Enter value"
+                            required
+                            :disabled="true"
+                          />
+                          <hux-dropdown
+                            v-if="isTextORSelect(sub_condition)"
+                            label="Select operator"
+                            :items="operatorOptions(sub_condition)"
+                            :selected="sub_condition.operator"
+                            data-e2e="select-sub-operator-btn"
+                            @on-select="
+                              onSelect('operator', sub_condition, $event)
+                            "
+                          />
+
+                          <hux-dropdown
+                            v-if="sub_condition.operator"
+                            :selected="sub_condition.text"
+                            :items="ruleAttributes.product_categories"
+                            label="Select product"
+                            data-e2e="select-product-btn"
+                            @on-select="
+                              onSelect('text', sub_condition, $event, condition)
+                            "
+                          />
+                        </div>
+                        <div
+                          v-if="!readMode"
+                          class="condition-actions pa-0 cursor-pointer"
+                          data-e2e="remove-attr"
+                          @click="
+                            removeCondition(
+                              sub_rule,
+                              indcondition,
+                              condition.rules
+                            )
+                          "
+                        >
+                          <icon type="trash" :size="18" color="black" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="pr-0 py-0 flex-right"
+                    :class="{
+                      invisible: sub_condition.attribute.key == 'product',
+                    }"
+                  >
+                    <div class="condition-summary">
+                      <span class="title text-h5">Rule Size</span>
+                      <span v-if="sub_condition.awaitingSize" class="pt-2">
+                        <v-progress-linear
+                          indeterminate
+                          buffer-value="0"
+                          stream
+                        />
+                      </span>
+                      <span v-else class="value text-h6 pt-1 text-subtitle-1">
+                        {{ sub_condition.size | Numeric(false, false, true) }}
+                      </span>
+                    </div>
+                  </div>
+                </v-col>
+              </div>
+            </div>
+          </v-col>
+        </div>
         <div class="add-wrap">
           <div class="pa-0 flex-fill new-attribute">
             <div class="add-section pa-5 text-body-1 primary--text">
@@ -295,6 +429,28 @@ const NEW_CONDITION = {
   awaitingSize: false,
   outputSummary: "0",
   size: "-",
+  selection_type: "",
+  delta_type: {
+    key: "days",
+    name: "Days",
+  },
+}
+
+const PRODUCT_NEW_CONDITION = {
+  id: "",
+  attribute: {
+    key: "product",
+    name: "Product",
+    type: "list",
+  },
+  operator: "",
+  text: "",
+  range: [],
+  awaitingSize: false,
+  outputSummary: "0",
+  size: "-",
+  selection_type: undefined,
+  delta_type: undefined,
 }
 
 export default {
@@ -345,13 +501,22 @@ export default {
       currentCityData: [],
       params: {},
       loaderValue: false,
-      selected: {},
       selectedStartDate: new Date(
         Date.now() - new Date().getTimezoneOffset() * 60000
       )
         .toISOString()
         .substr(0, 10),
-      selectedEndDate: "Select date",
+      selectedEndDate: new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10),
+      endMinDate: new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString(),
+      endMaxDate: new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      ).toISOString(),
     }
   },
   computed: {
@@ -405,21 +570,15 @@ export default {
       attributesData: "audiences/getDensityChartData",
     }),
     sliderLabel(attribute, value) {
-      if (!this.selected[attribute.key]) {
-        this.selected[attribute.key] = "value"
-      }
-      if (attribute.selected) {
-        this.selected[attribute.key] = attribute.selected
-      }
-      if (this.selected[attribute.key] == "value") {
+      if (attribute.selection_type == "value") {
         if (attribute.key === "ltv_predicted") {
           return `$${value}`
         }
         return value
-      } else if (this.selected[attribute.key] == "percentage") {
-        return `${Math.floor(
-          (value / (attribute.max - attribute.min)) * 100
-        )} %`
+      } else if (attribute.selection_type == "percentage") {
+        return `${Math.floor((value / (attribute.max - attribute.min)) * 100)}%`
+      } else {
+        return value
       }
     },
     sizeHandler() {
@@ -461,6 +620,7 @@ export default {
           _group_items.push(
             ...Object.keys(masterAttributes[groupKey]).map((key) => {
               const _subOption = masterAttributes[groupKey][key]
+
               const hasSubOptins = Object.keys(_subOption).filter(
                 (item) => !!_subOption[item]["name"]
               )
@@ -472,7 +632,7 @@ export default {
                 })
               }
               if (groupKey.includes("model")) {
-                _subOption["modelIcon"] = "model"
+                _subOption["modelIcon"] = "model-" + _subOption.icon
                 _subOption["selected"] = "value"
                 _subOption["metricOptions"] = [
                   {
@@ -496,6 +656,7 @@ export default {
               return _subOption
             })
           )
+
           _group_items.forEach((item) => (item["order"] = order))
           options.push(..._group_items)
         })
@@ -531,7 +692,7 @@ export default {
       } else if (condition.attribute.type === "text") {
         return Object.keys(this.ruleAttributes.text_operators)
           .map((key) => {
-            if (key.includes("within_the_last") || key == "between") {
+            if (key.includes("within_the_last") || key == "from") {
               return {
                 key: key,
                 name: this.ruleAttributes.text_operators[key],
@@ -546,6 +707,7 @@ export default {
         }))
       }
     },
+
     async triggerSizing(condition, triggerOverallSize = true) {
       condition.awaitingSize = true
       if (triggerOverallSize) {
@@ -557,26 +719,58 @@ export default {
         value = [...condition.range]
         type = "range"
       } else if (condition.operator && condition.attribute.type === "text") {
-        value = [condition.text]
+        if (condition.operator.key == "from") {
+          value = [this.selectedStartDate, this.selectedEndDate]
+          condition.start_date = this.selectedStartDate
+          condition.end_date = this.selectedEndDate
+        } else {
+          value = [condition.text]
+        }
+
         type = condition.operator.key
       } else {
         value = condition.text
         type = condition.operator.key
       }
+
       let filterJSON = {
         filters: [
           {
             section_aggregator: "ALL",
-            section_filters: [
-              {
-                field: condition.attribute.key,
-                type: type,
-                value: value,
-              },
-            ],
+            section_filters:
+              value != ""
+                ? [
+                    {
+                      field: condition.attribute.key,
+                      type: type,
+                      value: value,
+                      selection_type: condition.selection_type,
+                      delta_type: condition.delta_type.key,
+                    },
+                  ]
+                : [],
           },
         ],
       }
+
+      if (condition.rules?.length > 0) {
+        filterJSON.filters[0].section_filters[0].sub_filters = [
+          {
+            sub_section_aggregator: "All",
+            sub_section_filters: [],
+          },
+        ]
+        condition.rules[0].conditions.forEach((item) => {
+          filterJSON.filters[0].section_filters[0].sub_filters[0].sub_section_filters.push(
+            {
+              field: item.attribute.key,
+              type: item.attribute.type,
+              value: item.text.key,
+            }
+          )
+        })
+      }
+
       try {
         let data = await this.getRealtimeSize({
           filter: filterJSON,
@@ -612,6 +806,7 @@ export default {
     async getOverallSize() {
       this.$emit("loadingOverAllSize", true)
       this.loadingOverAllSize = true
+      console.log(this.rules)
       let filterJSON = {
         filters: [],
       }
@@ -624,16 +819,69 @@ export default {
           if (this.rules[i].conditions[j].attribute.type === "range") {
             value = [...this.rules[i].conditions[j].range]
             type = "range"
+          } else if (
+            this.rules[i].conditions[j].operator &&
+            this.rules[i].conditions[j].attribute.type === "text"
+          ) {
+            if (this.rules[i].conditions[j].operator.key == "from") {
+              value = [this.selectedStartDate, this.selectedEndDate]
+            } else {
+              value = [this.rules[i].conditions[j].text]
+            }
+
+            type = this.rules[i].conditions[j].operator.key
           } else {
             value = this.rules[i].conditions[j].text
             type = this.rules[i].conditions[j].operator.key
           }
+
+          let sub_filters = []
+
+          if (this.rules[i].conditions[j].rules?.length > 0) {
+            for (let a = 0; a < this.rules[i].conditions[j].rules.length; a++) {
+              let aggregatorOperand = this.rules[i].conditions[j].rules[a]
+                .operand
+                ? "ALL"
+                : "ANY"
+              let attributeRulesArray = []
+              for (
+                let b = 0;
+                b < this.rules[i].conditions[j].rules[a].conditions.length;
+                b++
+              ) {
+                if (this.rules[i].conditions[j].rules[a].conditions[b].text) {
+                  attributeRulesArray.push({
+                    field:
+                      this.rules[i].conditions[j].rules[a].conditions[b]
+                        .attribute.key,
+                    type: this.rules[i].conditions[j].rules[a].conditions[b]
+                      .operator.key,
+                    value:
+                      this.rules[i].conditions[j].rules[a].conditions[b].text
+                        .key,
+                  })
+                }
+              }
+              let sectionObject = {
+                sub_section_aggregator: aggregatorOperand,
+                sub_section_filters: attributeRulesArray,
+              }
+              sub_filters.push(sectionObject)
+            }
+          }
+
           if (value) {
-            attributeRulesArray.push({
+            let filterObj = {
               field: this.rules[i].conditions[j].attribute.key,
               type: type,
               value: value,
-            })
+              selection_type: this.rules[i].conditions[j].selection_type,
+              delta_type: this.rules[i].conditions[j].delta_type.key,
+            }
+            if (sub_filters.length > 0) {
+              filterObj.sub_filters = sub_filters
+            }
+            attributeRulesArray.push(filterObj)
           }
         }
         let sectionObject = {
@@ -658,7 +906,7 @@ export default {
       }
     },
 
-    async onSelect(type, condition, item) {
+    async onSelect(type, condition, item, parent = null) {
       let dataItem = item.model ? item.model : item
       condition[type] = dataItem
       if (type === "attribute") {
@@ -669,6 +917,7 @@ export default {
           })
           if (data) {
             data.key = dataItem.key
+            data.selection_type = dataItem.selected
             dataItem = data
           }
         }
@@ -680,12 +929,20 @@ export default {
         condition.range = [dataItem.min, dataItem.max]
         condition.awaitingSize = false
         condition.outputSummary = 0
+        condition.selection_type = dataItem.selection_type
       } else if (type === "operator") {
         condition.text = ""
         condition.range = []
         condition.awaitingSize = false
         condition.outputSummary = 0
+      } else if (type == "time") {
+        condition.delta_type = dataItem
+        this.triggerSizing(condition)
+      } else if (type == "text") {
+        condition.text = item
+        if (parent) this.triggerSizing(parent)
       }
+      this.$forceUpdate()
     },
     addNewCondition(id) {
       const newCondition = JSON.parse(JSON.stringify(NEW_CONDITION))
@@ -693,10 +950,22 @@ export default {
       const sectionFound = this.rules.filter((rule) => rule.id === id)
       if (sectionFound.length > 0) sectionFound[0].conditions.push(newCondition)
     },
-    removeCondition(parent, child) {
+    addNewSubCondition(id, condition) {
+      const newSubCondition = JSON.parse(JSON.stringify(PRODUCT_NEW_CONDITION))
+      newSubCondition.id = uuidv4()
+      const sectionFound = condition.rules.filter((rule) => rule.id === id)
+      if (sectionFound.length > 0)
+        sectionFound[0].conditions.push(newSubCondition)
+      this.$forceUpdate()
+    },
+    removeCondition(parent, child, condition_rules = null) {
       if (parent.conditions.length === 1) {
-        const indx = this.rules.findIndex((rul) => rul.id === parent.id)
-        this.rules.splice(indx, 1)
+        let ruleSet =
+          condition_rules && condition_rules.length > 0
+            ? condition_rules
+            : this.rules
+        const indx = ruleSet.findIndex((rul) => rul.id === parent.id)
+        ruleSet.splice(indx, 1)
       } else {
         parent.conditions.splice(child, 1)
       }
@@ -721,6 +990,15 @@ export default {
       newSection.id = uuidv4()
       this.rules.push(newSection)
       this.addNewCondition(newSection.id)
+    },
+    addNewSubSection(condition) {
+      const newSection = JSON.parse(JSON.stringify(NEW_RULE_SECTION))
+      newSection.id = uuidv4()
+      condition.rules?.length > 0
+        ? condition.rules.push(newSection)
+        : (condition["rules"] = [newSection])
+      this.addNewSubCondition(newSection.id, condition)
+      this.$forceUpdate()
     },
     async autoSearchFunc(cond, value) {
       if (value !== null && value !== "" && value !== undefined) {
@@ -747,17 +1025,18 @@ export default {
       }
     },
 
-    onStartDateSelect(val) {
+    onStartDateSelect(val, condition) {
       this.selectedStartDate = val
-      this.selectedEndDate = null
       this.endMinDate = val
+      this.triggerSizing(condition)
     },
-    onEndDateSelect(val) {
+    onEndDateSelect(val, condition) {
       if (!val) {
         this.selectedEndDate = "No end date"
       } else {
         this.selectedEndDate = val
       }
+      this.triggerSizing(condition)
     },
   },
 }
@@ -846,6 +1125,8 @@ export default {
           }
           .item-text-field {
             flex-grow: 1;
+            max-width: 200px;
+            margin-right: 8px;
             label {
               margin-bottom: 0 !important;
             }
@@ -854,6 +1135,7 @@ export default {
             .v-input__slot {
               min-height: inherit;
               height: 40px;
+              width: 200px;
               border: solid 1px var(--v-black-lighten3) !important;
               border-radius: 0;
               margin-bottom: 0;
@@ -944,6 +1226,8 @@ export default {
           }
           .item-text-field {
             flex-grow: 1;
+            max-width: 200px;
+            margin-right: 8px;
             label {
               margin-bottom: 0 !important;
             }
@@ -952,6 +1236,7 @@ export default {
             .v-input__slot {
               min-height: inherit;
               height: 40px;
+              width: 200px;
               border: solid 1px var(--v-black-lighten3) !important;
               border-radius: 0;
               margin-bottom: 0;
@@ -1014,6 +1299,24 @@ export default {
     }
     width: 97px;
     height: 60px;
+  }
+
+  ::v-deep .hux-date-picker {
+    .main-button {
+      height: 40px;
+      width: 200px !important;
+      min-width: 200px;
+      margin-left: 0px !important;
+      margin-right: 0px !important;
+    }
+  }
+
+  .invisible {
+    visibility: hidden;
+  }
+
+  ::v-deep .theme--light.v-input--is-disabled input {
+    color: var(--v-black-base);
   }
 }
 </style>

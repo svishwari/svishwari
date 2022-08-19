@@ -334,9 +334,7 @@ class OrchestrationRouteTest(RouteTestCase):
         self.assertIn("rule_attributes", response.json)
         self.assertIn("general", response.json["rule_attributes"])
         self.assertIn("events", response.json["rule_attributes"]["general"])
-        self.assertIn(
-            "product_categories", response.json["rule_attributes"]["general"]
-        )
+        self.assertIn("product_categories", response.json)
         self.assertIn("text_operators", response.json)
 
     def test_create_audience_with_destination(self):

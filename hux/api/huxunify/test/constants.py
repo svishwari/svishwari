@@ -200,6 +200,21 @@ IDENTITY_INSIGHT_RESPONSE = {
     },
     "message": "ok",
 }
+IDENTITY_INSIGHT_EMPTY_RESPONSE = {
+    "code": 200,
+    "body": {
+        "total_records": None,
+        "match_rate": None,
+        "total_unique_ids": None,
+        "total_anonymous_ids": None,
+        "total_address_ids": None,
+        "total_individual_ids": None,
+        "total_household_ids": None,
+        "updated": None,
+    },
+    "message": "ok",
+}
+
 EVENT_TYPES_RESPONSE = {
     "code": 200,
     "body": [
@@ -1320,6 +1335,12 @@ IDR_DATAFEEDS_RESPONSE = {
     ],
 }
 
+IDR_DATAFEEDS_EMPTY_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": [],
+}
+
 IDR_DATAFEED_DETAILS_RESPONSE = {
     "code": 200,
     "message": "ok",
@@ -1349,6 +1370,39 @@ IDR_DATAFEED_DETAILS_RESPONSE = {
             "merge_rate": 0,
             "records_source": "input waterfall",
             "stitched_timestamp": "2021-08-05T14:44:42.694Z",
+        },
+    },
+}
+
+IDR_DATAFEED_DETAILS_EMPTY_RESPONSE = {
+    "code": 200,
+    "message": "ok",
+    "body": {
+        "pinning": {
+            "input_records": None,
+            "output_records": None,
+            "empty_records": None,
+            "individual_id_match": None,
+            "household_id_match": None,
+            "company_id_match": None,
+            "address_id_match": None,
+            "db_reads": None,
+            "db_writes": None,
+            "filename": None,
+            "new_individual_ids": None,
+            "new_household_ids": None,
+            "new_company_ids": None,
+            "new_address_ids": None,
+            "process_time": None,
+            "pinning_timestamp": None,
+        },
+        "stitched": {
+            "digital_ids_added": None,
+            "digital_ids_merged": None,
+            "match_rate": None,
+            "merge_rate": None,
+            "records_source": None,
+            "stitched_timestamp": None,
         },
     },
 }
@@ -1535,6 +1589,12 @@ IDR_MATCHING_TRENDS_BY_DAY_DATA = {
             api_c.KNOWN_IDS: 906,
         },
     ],
+}
+
+IDR_MATCHING_TRENDS_BY_DAY_EMPTY_DATA = {
+    "code": 200,
+    "message": "ok",
+    api_c.BODY: [],
 }
 
 SCHEDULES = [

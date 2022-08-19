@@ -6,10 +6,86 @@
     "not_equals": "Does not equal",
     "within_the_last": "Within the last",
     "not_within_the_last": "Not within the last",
-    "between": "Between",
+    "from": "From",
     "value": "Value",
     "decile_percentage": "Decile percentage"
   },
+  "allowed_timedelta_types": [
+    {
+      "key": "day",
+      "name": "Days"
+    },
+    {
+      "key": "week",
+      "name": "Weeks"
+    },
+    {
+      "key": "month",
+      "name": "Months"
+    },
+    {
+      "key": "year",
+      "name": "Years"
+    }
+  ],
+  "product_categories": [
+    { "key": "new_arrival", "name": "New Arrival", "menu": [] },
+    { "key": "women", "name": "Wemon", "menu": [] },
+    { "key": "girls", "name": "Girls", "menu": [] },
+    { "key": "prints", "name": "Prints", "menu": [] },
+    { "key": "dresses", "name": "Dresses", "menu": [] },
+    { "key": "swim", "name": "Swim", "menu": [] },
+    { "key": "activewear", "name": "Activewear", "menu": [] },
+    {
+      "key": "shoes_&_accessories",
+      "name": "Shoes & accessories",
+      "menu": [
+        { "key": "bags", "name": "Bags", "menu": [] },
+        {
+          "key": "shoes",
+          "name": "Shoes",
+          "menu": [
+            { "key": "wedges", "name": "Wedges" },
+            { "key": "sandals", "name": "Sandals" },
+            { "key": "flats", "name": "Flats" },
+            { "key": "sneakers", "name": "Sneakers" },
+            { "key": "slippers", "name": "Slippers" }
+          ]
+        },
+        { "key": "jewelry", "name": "Jewelry", "menu": [] },
+        {
+          "key": "agendas_&_planners",
+          "name": "Agendas & planners",
+          "menu": []
+        },
+        { "key": "phone_&_tech", "name": "Phone & tech", "menu": [] },
+        {
+          "key": "travel_accessories",
+          "name": "Travel accessories",
+          "menu": []
+        },
+        { "key": "home_decor", "name": "Home decor", "menu": [] },
+        {
+          "key": "notebooks_&_stationary",
+          "name": "Notebook & stationary",
+          "menu": []
+        },
+        { "key": "scarves_&_wraps", "name": "Scarves & wraps", "menu": [] },
+        { "key": "sunglasses", "name": "Sunglasses", "menu": [] },
+        {
+          "key": "custom_jewelry_charm",
+          "name": "Custom jewelry charm",
+          "menu": []
+        },
+        {
+          "key": "face_mask_&_mask_set",
+          "name": "Face mask & mask set",
+          "menu": []
+        }
+      ]
+    },
+    { "key": "gifts", "name": "Gifts", "menu": [] }
+  ],
   "rule_attributes": {
     "model_scores": {
       "propensity_to_unsubscribe": {

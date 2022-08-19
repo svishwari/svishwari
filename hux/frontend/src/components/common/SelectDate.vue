@@ -145,7 +145,8 @@ export default defineComponent({
     })
 
     /**
-     * Change value to the selected month/year.
+     *
+     Change value to the selected month/year.
      *
      * @param {string} input the input changed ex. month or year
      */
@@ -156,7 +157,7 @@ export default defineComponent({
         month.value = monthOptions.value[0]
       }
       localValue.value = filters.Date(
-        `${month.value} ${year.value}`,
+        `01 ${month.value} ${year.value}`,
         "YYYY-MM-DD"
       )
     }
