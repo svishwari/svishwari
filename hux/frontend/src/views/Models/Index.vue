@@ -86,7 +86,9 @@
             <descriptive-card
               v-for="model in addedModels"
               :key="model.id"
-              :action-menu="model.status !== 'Active'"
+              :action-menu="
+                model.status !== 'Active' && getAccess('models', 'remove')
+              "
               :coming-soon="false"
               width="280"
               height="255"
@@ -178,6 +180,7 @@
               </template>
               <template slot="action-menu-options">
                 <div
+                  v-if="getAccess('models', 'remove')"
                   class="px-4 py-2 white d-flex flex-column text-h5"
                   data-e2e="remove-model"
                   @click="removeModel(model)"

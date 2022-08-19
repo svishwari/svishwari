@@ -10,7 +10,10 @@
         :title="destination.name"
         :sub-title="formatText(destination.category)"
         :disabled="['Pending', 'Requested'].includes(destination.status)"
-        :action-menu="true"
+        :action-menu="
+          getAccess('destinations', 'edit_url') ||
+          getAccess('destinations', 'delete')
+        "
         :coming-soon="false"
         :logo-option="true"
         :interactable="false"
