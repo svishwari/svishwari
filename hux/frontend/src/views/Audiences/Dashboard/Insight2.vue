@@ -160,7 +160,7 @@
           </metric-card>
 
           <metric-card
-            v-if="Object.keys(appliedFilters).length > 0"
+            v-if="showAttributes"
             class="audience-summary"
             :title="'Attributes'"
             :height="75"
@@ -733,6 +733,13 @@ export default {
 
     collapsibleBarHeight() {
       return this.showAdvertising ? this.advertisingHeight : "400px"
+    },
+
+    showAttributes() {
+      return (
+        Object.keys(this.appliedFilters).length > 0 &&
+        Object.keys(this.appliedFilters.general).length > 0
+      )
     },
 
     lookalikeableAudience() {
