@@ -776,6 +776,7 @@ export default {
     appliedFilters() {
       // try {
       let _filters = {}
+      _filters.general = {}
       let eventFilters = []
       const attributeOptions = this.attributeOptions()
       if (this.audience && this.audience.filters) {
@@ -829,9 +830,6 @@ export default {
         }
       }
       return _filters
-      // } catch (error) {
-      //   return []
-      // }
     },
   },
   async mounted() {
