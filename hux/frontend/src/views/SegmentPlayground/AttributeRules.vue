@@ -577,6 +577,8 @@ export default {
         return value
       } else if (attribute.selection_type == "percentage") {
         return `${Math.floor((value / (attribute.max - attribute.min)) * 100)}%`
+      } else {
+        return value
       }
     },
     sizeHandler() {
