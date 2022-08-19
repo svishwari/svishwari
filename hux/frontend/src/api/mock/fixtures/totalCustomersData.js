@@ -185,7 +185,12 @@ export default [
     new_customers_added: 2900,
   },
   {
-    date: "2022-02-11T00:00:00.000Z",
+    date: "2022-05-06T00:00:00.000Z",
+    total_customers: 111100,
+    new_customers_added: 2900,
+  },
+  {
+    date: "2022-08-17T00:00:00.000Z",
     total_customers: 112300,
     new_customers_added: 1200,
   },
