@@ -515,10 +515,14 @@ client["models"].getPipePerfomance = (id, version) => {
 }
 
 //#region Data sources
-client.dataSources.dataFeeds = (type) => {
-  return http.get(`/data-sources/${type}/datafeeds`)
+client.dataSources.dataFeeds = (batchDetails) => {
+  return http.get(
+    `/data-sources/${batchDetails.type}/datafeeds?batch_number=${batchDetails.batch_number}&batch_size=${batchDetails.batch_size}`
+  )
 }
 client.dataSources.dataFeedsDetails = (
+  batch_size,
+  batch_number,
   type,
   name,
   start_date,
@@ -530,7 +534,9 @@ client.dataSources.dataFeedsDetails = (
       start_date || end_date || status.length > 0 ? "?" : ""
     }${start_date ? "start_date=" + start_date + "&" : ""}${
       end_date ? "end_date=" + end_date + "&" : ""
-    }${status.length > 0 ? "status=" + status : ""}`
+    }${
+      status.length > 0 ? "status=" + status : ""
+    }?batch_number=${batch_number}&batch_size=${batch_size}`
   )
 }
 //#endregion

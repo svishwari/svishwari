@@ -13,10 +13,13 @@
       class="datasource-datafeeds-table"
       data-e2e="datasource-datafeeds-table"
     >
-      <hux-data-table
+      <hux-lazy-data-table
         sort-desc
         :columns="columns"
         :data-items="dataSourceDataFeeds"
+        :enable-lazy-load="enableLazyLoad"
+        view-height="calc(100vh - 230px)"
+        @bottomScrollEvent="intersected"
       >
         <template #row-item="{ item }">
           <td v-for="column in columns" :key="column.value" class="text-body-1">
@@ -112,7 +115,7 @@
             </tooltip>
           </td>
         </template>
-      </hux-data-table>
+      </hux-lazy-data-table>
     </v-row>
     <v-card
       v-else-if="!loading && hasDataFeeds == 0"
@@ -167,9 +170,9 @@ import PageHeader from "@/components/PageHeader"
 import Breadcrumb from "@/components/common/Breadcrumb"
 import Status from "@/components/common/Status.vue"
 import Tooltip from "@/components/common/Tooltip.vue"
-import HuxDataTable from "@/components/common/dataTable/HuxDataTable.vue"
 import EmptyPage from "@/components/common/EmptyPage.vue"
 import { formatDateToLocal } from "@/utils"
+import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue"
 
 export default {
   name: "DataSourceListing",
@@ -177,10 +180,10 @@ export default {
   components: {
     Breadcrumb,
     PageHeader,
-    HuxDataTable,
     Status,
     Tooltip,
     EmptyPage,
+    HuxLazyDataTable,
   },
 
   data() {
@@ -226,6 +229,12 @@ export default {
       ],
       loading: true,
       datafeedErrorState: false,
+      enableLazyLoad: false,
+      lastBatch: 0,
+      batchDetails: {
+        batch_size: 25,
+        batch_number: 1,
+      },
     }
   },
 
@@ -233,6 +242,7 @@ export default {
     ...mapGetters({
       dataSource: "dataSources/single",
       dataFeeds: "dataSources/dataFeeds",
+      getTotalrecords: "dataSources/getTotalrecords",
     }),
 
     dataSourceId() {
@@ -274,10 +284,10 @@ export default {
       if (!this.selectedDataSource) {
         await this.getDataSource(this.dataSourceId)
       }
-      await this.getDataFeeds({
-        id: this.selectedDataSource.id,
-        type: this.selectedDataSource.type,
-      })
+      this.batchDetails.id = this.selectedDataSource.id
+      this.batchDetails.type = this.selectedDataSource.type
+      await this.fetchDataSourceByBatch()
+      await this.calculateLastBatch()
     } catch (error) {
       this.datafeedErrorState = true
     } finally {
@@ -290,6 +300,20 @@ export default {
       getDataFeeds: "dataSources/getDataFeeds",
       getDataSource: "dataSources/getDataSource",
     }),
+    intersected() {
+      if (this.batchDetails.batch_number <= this.lastBatch) {
+        this.batchDetails.isLazyLoad = true
+        this.enableLazyLoad = true
+        this.fetchDataSourceByBatch()
+      } else {
+        this.batchDetails.isLazyLoad = false
+        this.enableLazyLoad = false
+      }
+    },
+    async fetchDataSourceByBatch() {
+      await this.getDataFeeds(this.batchDetails)
+      this.batchDetails.batch_number++
+    },
     getDataFeedDetailsFunc(item) {
       this.$router.push({
         name: "DataSourceFeedsListing",
@@ -298,6 +322,11 @@ export default {
           name: item.name,
         },
       })
+    },
+    calculateLastBatch() {
+      this.lastBatch = Math.ceil(
+        this.getTotalrecords / this.batchDetails.batch_size
+      )
     },
     formatDateToLocal: formatDateToLocal,
   },

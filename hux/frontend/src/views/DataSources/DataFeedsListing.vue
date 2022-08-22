@@ -45,7 +45,7 @@
           v-if="!loading && hasDataFeeds"
           class="datasource-datafeeds-details-table"
         >
-          <hux-data-table
+          <hux-lazy-data-table
             :columns="getCols"
             :data-items="dataSourceDataFeedsDetails"
             view-height="calc(100vh - 150px)"
@@ -54,6 +54,8 @@
             nested
             data-e2e="data-feed-details-table"
             class="big-table"
+            :enable-lazy-load="enableLazyLoad"
+            @bottomScrollEvent="intersected"
           >
             <template #item-row="{ item, expandFunc, isExpanded }">
               <tr :class="{ 'expanded-row': isExpanded }">
@@ -407,7 +409,7 @@
                 </hux-data-table>
               </td>
             </template>
-          </hux-data-table>
+          </hux-lazy-data-table>
         </v-row>
         <v-card
           v-else-if="!loading && hasDataFeeds == 0"
@@ -476,6 +478,7 @@ import { formatDate, formatDateToLocal } from "@/utils"
 import Icon from "@/components/common/Icon.vue"
 import DataFeedsTableFilter from "./DataFeedsTableFilter.vue"
 import { getAccess } from "../../utils"
+import HuxLazyDataTable from "@/components/common/dataTable/HuxLazyDataTable.vue"
 
 export default {
   name: "DataSourceFeedsListing",
@@ -490,6 +493,7 @@ export default {
     EmptyPage,
     Icon,
     DataFeedsTableFilter,
+    HuxLazyDataTable,
   },
 
   data() {
@@ -498,7 +502,11 @@ export default {
       datafeedErrorState: false,
       isFilterToggled: false,
       numFiltersSelected: 1,
-      api_params: {
+      enableLazyLoad: false,
+      lastBatch: 0,
+      batchDetails: {
+        batch_size: 25,
+        batch_number: 1,
         start_date: null,
         end_date: null,
         status: [],
@@ -514,6 +522,7 @@ export default {
       dataSource: "dataSources/single",
       dataFeeds: "dataSources/dataFeeds",
       dataFeedDetails: "dataSources/dataFeedDetails",
+      getTotalrecords: "dataSources/getTotalrecords",
     }),
 
     dataSourceId() {
@@ -651,9 +660,12 @@ export default {
       this.setDefaultData()
       if (!this.selectedDataSource) {
         this.selectedDataSource = await this.getDataSource(this.dataSourceId)
-        this.api_params.type = this.selectedDataSource.type
+        this.batchDetails.type = this.selectedDataSource.type
       }
-      await this.getDataFeedDetails(this.api_params)
+      this.batchDetails.id = this.selectedDataSource.id
+      this.batchDetails.type = this.selectedDataSource.type
+      await this.fetchDataSourceByBatch()
+      await this.calculateLastBatch()
     } catch (error) {
       this.datafeedErrorState = true
     } finally {
@@ -667,6 +679,20 @@ export default {
       getDataSource: "dataSources/getDataSource",
       getDataFeedDetails: "dataSources/getDataFeedsDetails",
     }),
+    intersected() {
+      if (this.batchDetails.batch_number <= this.lastBatch) {
+        this.batchDetails.isLazyLoad = true
+        this.enableLazyLoad = true
+        this.fetchDataSourceByBatch()
+      } else {
+        this.batchDetails.isLazyLoad = false
+        this.enableLazyLoad = false
+      }
+    },
+    async fetchDataSourceByBatch() {
+      await this.getDataFeedDetails(this.batchDetails)
+      this.batchDetails.batch_number++
+    },
     getTooltip(status, sub_status) {
       return this.tooltipText[status] && this.tooltipText[status][sub_status]
         ? this.tooltipText[status][sub_status]
@@ -684,21 +710,21 @@ export default {
           today.getMonth(),
           today.getDate() - 1
         )
-        this.api_params.start_date = this.$options.filters.Date(
+        this.batchDetails.start_date = this.$options.filters.Date(
           yesterday,
           "YYYY-MM-DD"
         )
-        this.api_params.end_date = this.$options.filters.Date(
+        this.batchDetails.end_date = this.$options.filters.Date(
           today,
           "YYYY-MM-DD"
         )
       } else if (obj.selectedToday) {
         const today = new Date()
-        this.api_params.start_date = this.$options.filters.Date(
+        this.batchDetails.start_date = this.$options.filters.Date(
           today,
           "YYYY-MM-DD"
         )
-        this.api_params.end_date = this.$options.filters.Date(
+        this.batchDetails.end_date = this.$options.filters.Date(
           today,
           "YYYY-MM-DD"
         )
@@ -709,18 +735,18 @@ export default {
           today.getMonth(),
           today.getDate() - 1
         )
-        this.api_params.start_date = this.$options.filters.Date(
+        this.batchDetails.start_date = this.$options.filters.Date(
           yesterday,
           "YYYY-MM-DD"
         )
-        this.api_params.end_date = this.$options.filters.Date(
+        this.batchDetails.end_date = this.$options.filters.Date(
           yesterday,
           "YYYY-MM-DD"
         )
       }
       if (obj.selectedTimeType == "All time") {
-        this.api_params.start_date = null
-        this.api_params.end_date = null
+        this.batchDetails.start_date = null
+        this.batchDetails.end_date = null
       } else if (obj.selectedTimeType == "Last month") {
         let today_date = new Date()
         let getStartDate = new Date(
@@ -733,11 +759,11 @@ export default {
           today_date.getMonth() - 1,
           today_date.getDate()
         )
-        this.api_params.start_date = this.$options.filters.Date(
+        this.batchDetails.start_date = this.$options.filters.Date(
           getStartDate,
           "YYYY-MM-DD"
         )
-        this.api_params.end_date = this.$options.filters.Date(
+        this.batchDetails.end_date = this.$options.filters.Date(
           getEndDate,
           "YYYY-MM-DD"
         )
@@ -753,22 +779,22 @@ export default {
           today_date.getMonth(),
           today_date.getDate() - 7
         )
-        this.api_params.start_date = this.$options.filters.Date(
+        this.batchDetails.start_date = this.$options.filters.Date(
           getStartDate,
           "YYYY-MM-DD"
         )
-        this.api_params.end_date = this.$options.filters.Date(
+        this.batchDetails.end_date = this.$options.filters.Date(
           getEndDate,
           "YYYY-MM-DD"
         )
       }
 
       if (obj.selectedStatus) {
-        this.api_params.status = obj.selectedStatus
+        this.batchDetails.status = obj.selectedStatus
       }
 
       this.loading = true
-      await this.getDataFeedDetails(this.api_params)
+      await this.fetchDataSourceByBatch()
       if (obj.filterLength) {
         this.numFiltersSelected = obj.filterLength
       }
@@ -804,8 +830,13 @@ export default {
       //   getEndDate,
       //   "YYYY-MM-DD"
       // )
-      this.api_params.type = this.selectedDataSource?.type
-      this.api_params.name = this.dataSourceFeedName
+      this.batchDetails.type = this.selectedDataSource?.type
+      this.batchDetails.name = this.dataSourceFeedName
+    },
+    calculateLastBatch() {
+      this.lastBatch = Math.ceil(
+        this.getTotalrecords / this.batchDetails.batch_size
+      )
     },
 
     formatDateToLocal: formatDateToLocal,

@@ -7,6 +7,7 @@ const namespaced = true
 const state = {
   items: {},
   dataFeedsDetails: [],
+  total: 0,
 }
 
 const getters = {
@@ -17,6 +18,8 @@ const getters = {
   dataFeeds: (state) => (id) => state.items[id]["dataFeeds"],
 
   dataFeedDetails: (state) => state.dataFeedsDetails,
+
+  getTotalrecords: (state) => state.total,
 }
 
 const mutations = {
@@ -36,6 +39,10 @@ const mutations = {
 
   SET_DATA_FEEDS_DETAILS(state, data) {
     Vue.set(state, "dataFeedsDetails", data)
+  },
+
+  SET_TOTAL(state, item) {
+    Vue.set(state, "total", item)
   },
 }
 
@@ -75,6 +82,7 @@ const actions = {
   async getDataFeeds({ commit }, data) {
     try {
       const response = await api.dataSources.dataFeeds(data.type)
+      commit("SET_TOTAL", response.data.total_records)
       commit("SET_DATA_FEEDS", {
         items: response.data["datafeeds"],
         id: data.id,
@@ -87,16 +95,27 @@ const actions = {
 
   async getDataFeedsDetails(
     { commit },
-    { type, name, start_date = null, end_date = null, status = null }
+    {
+      batch_size,
+      batch_number,
+      type,
+      name,
+      start_date = null,
+      end_date = null,
+      status = null,
+    }
   ) {
     try {
       const response = await api.dataSources.dataFeedsDetails(
+        batch_size,
+        batch_number,
         type,
         name,
         start_date,
         end_date,
         status
       )
+      commit("SET_TOTAL", response.data.total_records)
       commit("SET_DATA_FEEDS_DETAILS", response.data)
     } catch (error) {
       handleError(error)
